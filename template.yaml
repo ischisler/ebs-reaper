@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+
+  Lambda that deletes unattached EBS volumes
+
+Globals:
+  Function:
+    Runtime: python3.8
+    Timeout: 300
+    MemorySize: 256
+
+Resources:
+  EBSSnapshotFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: 'lambda for deleting unattached EBS volumes'
+      Role: arn:aws:iam::111111111111:role/seceng-ebs-reaper-lambda-role
+      FunctionName: seceng-ebs-snapshot
+      CodeUri: src
+      Handler: ebs-backup.lambda_handler
+      Tracing: Active
+
+  EBSReaperFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: 'lambda for deleting unattached EBS volumes'
+      Role: arn:aws:iam::111111111111:role/seceng-ebs-reaper-lambda-role
+      FunctionName: seceng-ebs-reaper
+      CodeUri: src
+      Handler: ebs-reaper.lambda_handler
+      Tracing: Active

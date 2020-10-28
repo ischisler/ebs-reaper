@@ -1,0 +1,9 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "seceng-ebs-reaper-lambbda"
+s3_bucket = "seceng-ebs-reaper-bucket"
+region = "us-west-2"
+confirm_changeset = false
+capabilities = "CAPABILITY_IAM"

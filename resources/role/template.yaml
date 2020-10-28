@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+
+  Lambda that removes unattached EBS volumes.
+
+Resources:
+  EBSReaperRTSSRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: "AllowLambda"
+            Effect: Allow
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Description: "Lambda Role for disabling unused access keys"
+      RoleName: "seceng-ebs-reaper-lambda-role"
+      Policies:
+        - PolicyName: "seceng-ebs-reaper-lambda-role-policy"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'lambda:*'
+                  - 'xray:*'
+                  - 'logs:*'
+                  - 'ec2:*'
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - 'sqs:ReceiveMessage'
+                  - 'sqs:DeleteMessage'
+                  - 'sqs:GetQueueAttributes'
+                Resource: "*"

@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+
+  SQS Queue for EBS Reaper workflow
+
+Resources:
+  EBSReaperSQSQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      ContentBasedDeduplication: True
+      FifoQueue: True
+      KmsMasterKeyId: 'alias/aws/sqs'
+      QueueName: 'seceng-ebs-reaper-queue.fifo'
+      Tags: 
+        - Key: 'Team'
+          Value: 'SecEng'
+        - Key: 'Application'
+          Value: 'ebs-reaper'
+        - Key: 'env'
+          Value: 'rtss' 
+
+  EBSReaperSQSPolicy: 
+    DependsOn: EBSReaperSQSQueue
+    Type: AWS::SQS::QueuePolicy
+    Properties: 
+      PolicyDocument: 
+        Id: seceng-ebs-reaper-sqs-policy
+        Version: '2012-10-17'
+        Statement: 
+          - Sid: AllowLambdaRole
+            Effect: Allow
+            Principal: 
+              AWS: arn:aws:iam::111111111111:role/seceng-ebs-reaper-lambda-role
+            Action: 
+              - 'sqs:*'
+            Resource: '*'
+      Queues: 
+        - !Ref EBSReaperSQSQueue
